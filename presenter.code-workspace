@@ -5,10 +5,6 @@
       "name": "Frontend"
     },
     {
-      "path": "./backend",
-      "name": "Backend"
-    },
-    {
       "path": "./",
       "name": "Root"
     }
