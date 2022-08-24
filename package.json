@@ -1,0 +1,42 @@
+{
+  "name": "presenter",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "workspaces": ["frontend", "backend", "cli"],
+  "scripts": {
+    "frontend": "yarn workspace frontend run",
+    "backend": "yarn workspace backend run",
+    "start": "yarn frontend start & yarn backend start",
+    "build": "yarn frontend build & yarn backend build",
+    "deploy": "yarn frontend deploy & yarn backend deploy",
+    "ci": "yarn frontend ci & yarn backend ci",
+    "lint": "yarn frontend lint & yarn backend lint",
+    "test": "yarn frontend test & yarn backend test",
+    "test:coverage": "yarn frontend test:coverage & yarn backend test:coverage"
+  },
+  "author": "Christopher Ouellette",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "eslint": "^8.14.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "firebase": "^9.8.1",
+    "firebase-functions": "^3.21.2",
+    "jest": "^28.1.0",
+    "opener": "^1.5.2",
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.4",
+    "webpack-bundle-analyzer": "^4.5.0"
+  },
+  "prettier": {
+    "printWidth": 80
+  }
+}

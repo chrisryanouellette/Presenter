@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "path": "./frontend",
+      "name": "Frontend"
+    },
+    {
+      "path": "./backend",
+      "name": "Backend"
+    },
+    {
+      "path": "./",
+      "name": "Root"
+    }
+  ],
+  "settings": {
+    "editor.bracketPairColorization.enabled": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.fixAll": false
+    },
+    "jest.autoRun": "off"
+  }
+}

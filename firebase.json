@@ -1,0 +1,22 @@
+{
+  "functions": {
+    "source": "./backend",
+    "predeploy": "yarn backend build"
+  },
+  "hosting": {
+    "public": "./frontend/build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "emulators": {
+    "hosting": {
+      "host": "localhost",
+      "port": 3000
+    }
+  }
+}

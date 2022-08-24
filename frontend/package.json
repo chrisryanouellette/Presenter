@@ -1,0 +1,90 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "build/index.html",
+  "scripts": {
+    "develop": "react-scripts start",
+    "build": "react-scripts build",
+    "emulate": "firebase emulators:start --only hosting",
+    "deploy": "",
+    "ci": "yarn lint && yarn test:coverage",
+    "bundle": "yarn bundle:stats && yarn bundle:view",
+    "bundle:stats": "react-scripts build --stats",
+    "bundle:view": "webpack-bundle-analyzer --mode static --report build/bundle-stats.html build/bundle-stats.json",
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test",
+    "test:coverage": "yarn test --coverage",
+    "test:coverage:view": "yarn test:coverage --watchAll=false && yarn opener ./coverage/lcov-report/index.html",
+    "test:debug": "react-scripts --inspect-brk test --runInBand",
+    "lint": "yarn tsc && yarn eslint",
+    "tsc": "tsc --noemit",
+    "eslint": "yarn eslint:base src/",
+    "eslint:base": "eslint --ignore-path ../.gitignore --ext ts,tsx -c ./.eslintrc.js",
+    "eslint:check": "yarn eslint --fix-dry-run src/",
+    "eslint:fix": "yarn eslint --fix src/",
+    "format": "prettier './src/**'",
+    "format:fix": "prettier --write './src/**'"
+  },
+  "author": "Christopher Ouellette",
+  "license": "MIT",
+  "devDependencies": {
+    "@testing-library/dom": "^8.13.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^14.1.1",
+    "@types/node": "^16.11.33",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
+    "autoprefixer": "^10.4.7",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "eslint-plugin-testing-library": "^5.5.1",
+    "msw": "^0.42.3",
+    "postcss": "^8.4.13",
+    "react-scripts": "5.0.1",
+    "tailwindcss": "^3.0.24"
+  },
+  "dependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "web-vitals": "^2.1.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "displayName": "frontend",
+    "moduleNameMapper": {
+      "\\.(css|less|mdx)$": "<rootDir>/src/__mocks__/mockImports.js"
+    },
+    "collectCoverageFrom": [
+      "**/src/**/*.{js,jsx,ts,tsx}",
+      "!./src/index.tsx",
+      "!./src/reportWebVitals.ts",
+      "!**/node_modules/",
+      "!**/build/",
+      "!**/stories/*",
+      "!**/*.d.{js,jsx,ts,tsx}",
+      "!**/*.stories.{js,jsx,ts,tsx}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 90,
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    }
+  },
+  "proxy": "https://localhost:5001"
+}
