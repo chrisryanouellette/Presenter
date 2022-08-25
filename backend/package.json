@@ -1,0 +1,61 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "lib/index.js",
+  "scripts": {
+    "develop": "yarn build:watch & yarn start",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start": "nodemon ./lib/index.js",
+    "bundle": "yarn bundle:stats && yarn bundle:view",
+    "bundle:stats": "react-scripts build --stats",
+    "bundle:view": "webpack-bundle-analyzer --mode static --report build/bundle-stats.html build/bundle-stats.json",
+    "test": "yarn jest",
+    "test:watch": "yarn test --watch",
+    "test:coverage": "yarn test --coverage",
+    "test:coverage:view": "yarn test:coverage --watchAll=false && yarn opener ./coverage/lcov-report/index.html",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --watch",
+    "lint": "yarn tsc && yarn eslint",
+    "tsc": "tsc --noemit",
+    "eslint": "yarn eslint:base src/",
+    "eslint:base": "eslint --ignore-path ../.gitignore --ext ts,tsx -c ./.eslintrc.js",
+    "eslint:check": "yarn eslint --fix-dry-run src/",
+    "eslint:fix": "yarn eslint --fix src/",
+    "format": "prettier './src/**'",
+    "format:fix": "prettier --write './src/**'"
+  },
+  "author": "Christopher Ouellette",
+  "license": "MIT",
+  "devDependencies": {
+    "firebase-functions-test": "^2.1.0",
+    "nodemon": "2.0.19"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "jest": {
+    "displayName": "backend",
+    "testEnvironment": "jest-environment-node",
+    "preset": "ts-jest",
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "collectCoverageFrom": [
+      "**/src/**/*.{js,ts}",
+      "!**/node_modules/",
+      "!**/lib/",
+      "!**/*.d.{js,jsx,ts,tsx}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 90,
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    }
+  }
+}
