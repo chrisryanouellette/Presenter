@@ -14,6 +14,9 @@ const handleRenameFile = async (
   action: RenameAction
 ): Promise<RenameReturn["return"]> => {
   const res = await fetch(`${FilePath}?path=${action.fileName}`);
+  if (res.status === 404) {
+    return null;
+  }
   const text = await res.text();
   return text;
 };

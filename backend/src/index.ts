@@ -21,23 +21,41 @@ const useDebounce = (cb: () => void): void => {
     timeout = setTimeout(() => {
       timeout = null;
       cb();
-    }, 50);
+    }, 100);
   }
 };
 
 /** Watch for file changes */
-const filePath = path.resolve(__dirname, "../files");
-console.log(`Watching files in folder: "${filePath}"`);
+const fileDir = path.resolve(__dirname, "../../files");
+console.log(`Watching files in folder: "${fileDir}"`);
 
-fs.watch(filePath, { recursive: true }, (event, fileName) => {
-  useDebounce(() => {
+fs.watch(fileDir, { recursive: true }, (event, fileName) => {
+  console.log("Update", event, fileName);
+  const update = (): void =>
     /** Tell each connected client the file was updated */
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify({ fileName, type: event }));
       }
     });
-  });
+
+  if (event === "change") {
+    /** change events can fire multiple times in quick successions */
+    useDebounce(update);
+  } else {
+    update();
+  }
+});
+
+app.get("/get-files", (req, res) => {
+  try {
+    const files = fs.readdirSync(fileDir);
+    res.status(200);
+    return res.json(files);
+  } catch (error) {
+    res.status(500);
+    return res.end();
+  }
 });
 
 /** File request route */
@@ -51,9 +69,9 @@ app.get("/file", (req, res) => {
     res.status(500);
     return res.send("Invalid type for path query param.");
   }
-  const filePath = path.resolve(__dirname, "../files/", req.query.path);
+  const filePath = path.resolve(fileDir, req.query.path);
   if (!fs.existsSync(filePath)) {
-    res.status(500);
+    res.status(404);
     return res.send(`No file exists at "${filePath}"`);
   }
   res.status(200);

@@ -11,8 +11,8 @@ export type RequestReturn = {
 
 const handleRequestFile = async (): Promise<RequestReturn["return"]> => {
   const res = await fetch(`${RequestFilePath}`);
-  const data: { files: string[] } = await res.json();
-  return data.files;
+  const data: string[] = await res.json();
+  return data;
 };
 
 export { handleRequestFile };

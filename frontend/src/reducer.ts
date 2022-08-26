@@ -33,4 +33,11 @@ const reducers: {
   [Events.Change]: handleChangeFile,
 };
 
-export { reducers };
+const dispatch = <E extends Events>(
+  action: Extract<Actions, { type: E }>
+): Promise<Extract<Returns, { type: E }>["return"]> => {
+  const reducer = reducers[action.type] as any;
+  return reducer(action);
+};
+
+export { dispatch };

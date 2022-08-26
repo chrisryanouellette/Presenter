@@ -9,6 +9,10 @@
       "name": "Backend"
     },
     {
+      "path": "./files",
+      "name": "Files"
+    },
+    {
       "path": "./",
       "name": "Root"
     }

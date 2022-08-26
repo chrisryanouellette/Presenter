@@ -1,31 +1,75 @@
-import { useCallback, useEffect, useState } from "react";
-import { ChangeAction } from "./actions/edit-file";
-import { RenameAction } from "./actions/rename-file";
-import { reducers } from "./reducer";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Header } from "./Header";
+import { Actions, dispatch, Events } from "./reducer";
+import { rules } from "./rules";
+import { copy } from "./copy";
+import "./markdown.css";
 
 const socket = new WebSocket("ws://localhost:5001");
 
 const App = (): JSX.Element => {
-  const [fileList, setFileList] = useState<string[]>([]);
+  const [files, setFiles] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<string>("");
   const [contents, setContents] = useState<string | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const markdown = useMemo(() => {
+    let markdown = (contents || "").trim();
+    {
+      rules.forEach(([rule, template]) => {
+        markdown = markdown.replace(rule, template);
+      });
+    }
+    return markdown;
+  }, [contents]);
 
   const handleMessage = useCallback<(event: MessageEvent) => Promise<void>>(
     async (event) => {
-      type MessageResponse = RenameAction | ChangeAction;
-      const data: MessageResponse = JSON.parse(event.data);
-      const reducer = reducers[data.type] as any;
-      const result: string | null = await reducer(data);
-      if (result === null) {
-        // Delete file
-        setFileList((prev) => prev.filter((p) => data.fileName !== p));
-        setContents(() => null);
-      } else {
-        // Update File
-        setContents(() => result);
+      const data: Actions = JSON.parse(event.data);
+      if (data.type === Events.Change || data.type === Events.Rename) {
+        const result = await dispatch({ ...data });
+        if (data.type === Events.Change) {
+          /** Update File */
+          if (data.fileName === selectedFile) {
+            return setContents(() => result);
+          }
+        }
+        /** Handle file rename */
+        if (result === null) {
+          // Delete file
+          setFiles((prev) => prev.filter((p) => data.fileName !== p));
+          if (data.fileName === selectedFile) {
+            setContents(() => null);
+          }
+        } else {
+          // Add new file
+          setFiles((files) => files.concat(data.fileName));
+        }
       }
     },
-    []
+    [selectedFile]
   );
+
+  const loadAllFiles = useCallback<() => Promise<void>>(async () => {
+    const files = await dispatch({ type: Events.Request });
+    setFiles(() => files);
+    if (files.length) {
+      handleSelectFile(files[0]);
+    }
+  }, []);
+
+  const handleSelectFile = async (fileName: string): Promise<void> => {
+    const result = await dispatch({ type: Events.Change, fileName });
+    setContents(() => result);
+    setSelectedFile(() => fileName);
+  };
 
   useEffect(() => {
     socket.addEventListener("message", handleMessage);
@@ -34,9 +78,46 @@ const App = (): JSX.Element => {
     };
   }, [handleMessage]);
 
+  useEffect(() => {
+    let buttons: NodeListOf<HTMLButtonElement>;
+    if (ref.current) {
+      buttons = ref.current.querySelectorAll<HTMLButtonElement>(".code button");
+      Array.from(buttons).forEach((btn) => {
+        btn.addEventListener("click", copy);
+      });
+    }
+    return function copyCodeButtonCleanup(): void {
+      Array.from(buttons).forEach((btn) =>
+        btn.removeEventListener("click", copy)
+      );
+    };
+  }, [contents]);
+
+  useEffect(() => {
+    if (!files.length) {
+      loadAllFiles();
+    }
+  }, [files.length, loadAllFiles]);
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      Array.from(ref.current.childNodes).forEach((child) => {
+        if (!child.textContent) {
+          child.remove();
+        }
+      });
+    }
+  }, [contents]);
+
   return (
-    <div>
-      <h1>{contents}</h1>
+    <div className="my-4 mx-8">
+      <Header files={files} onSelect={handleSelectFile} />
+      <div
+        ref={ref}
+        className="markdown"
+        dangerouslySetInnerHTML={{ __html: markdown }}
+      ></div>
+      {!markdown && <p>This file has no content</p>}
     </div>
   );
 };

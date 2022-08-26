@@ -11,7 +11,7 @@
   "scripts": {
     "frontend": "yarn workspace frontend run",
     "backend": "yarn workspace backend run",
-    "start": "yarn frontend start & yarn backend start",
+    "start": "yarn frontend develop & yarn backend develop",
     "build": "yarn frontend build & yarn backend build",
     "deploy": "yarn frontend deploy & yarn backend deploy",
     "ci": "yarn frontend ci & yarn backend ci",
