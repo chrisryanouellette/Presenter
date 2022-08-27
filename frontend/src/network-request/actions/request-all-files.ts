@@ -1,5 +1,5 @@
-import { RequestFilePath } from "../constants";
-import { Events } from "../reducer";
+import { RequestFilePath } from "../../constants";
+import { Events } from "..";
 
 export type RequestAction = {
   type: Events.Request;

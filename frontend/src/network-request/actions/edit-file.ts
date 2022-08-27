@@ -1,5 +1,5 @@
-import { FilePath } from "../constants";
-import { Events } from "../reducer";
+import { FilePath } from "../../constants";
+import { Events } from "..";
 
 export type ChangeAction = {
   type: Events.Change;

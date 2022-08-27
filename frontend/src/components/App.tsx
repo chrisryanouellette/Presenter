@@ -6,11 +6,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { Actions, dispatch, Events } from "../network-request";
+import { rules } from "../utilities/rules";
+import { copy } from "../utilities/copy";
 import { Header } from "./Header";
-import { Actions, dispatch, Events } from "./reducer";
-import { rules } from "./rules";
-import { copy } from "./copy";
-import "./markdown.css";
+import "../styles/markdown.css";
 
 const socket = new WebSocket("ws://localhost:5001");
 

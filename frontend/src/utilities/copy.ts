@@ -5,6 +5,13 @@ const copy = async (e: MouseEvent): Promise<void> => {
       const code = parent.querySelector("code");
       if (code) {
         await navigator.clipboard.writeText(code.textContent || "");
+        e.target.textContent = "Copied";
+
+        setTimeout(() => {
+          if (e.target instanceof HTMLElement) {
+            e.target.textContent = "Copy";
+          }
+        }, 2000);
       }
     }
   }
