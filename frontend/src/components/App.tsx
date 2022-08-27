@@ -26,6 +26,7 @@ const App = (): JSX.Element => {
           if (data.fileName === selectedFile) {
             return setContent(() => result);
           }
+          return;
         }
         /** Handle file rename */
         if (result === null) {
@@ -42,10 +43,15 @@ const App = (): JSX.Element => {
             }
             return files.concat(data.fileName);
           });
-          // Check if the file added has content
-          const filesResult = await dispatch({ ...data, type: Events.Change });
-          if (filesResult) {
-            return setContent(() => result);
+          if (data.fileName === selectedFile) {
+            // Check if the file added has content
+            const filesResult = await dispatch({
+              ...data,
+              type: Events.Change,
+            });
+            if (filesResult) {
+              return setContent(() => result);
+            }
           }
         }
       }
