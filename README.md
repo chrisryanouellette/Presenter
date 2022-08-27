@@ -1,6 +1,6 @@
 # Presenter
 
-To get started, run `yarn start` in the root directory.
+To get started, run `yarn && yarn start` in the root directory.
 
 you can then begin adding `.md` files to the `files/` directory.
 
