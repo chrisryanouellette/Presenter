@@ -36,7 +36,12 @@ const App = (): JSX.Element => {
           }
         } else {
           // Add new file
-          setFiles((files) => files.concat(data.fileName));
+          setFiles((files) => {
+            if (files.includes(data.fileName)) {
+              return files;
+            }
+            return files.concat(data.fileName);
+          });
           // Check if the file added has content
           const filesResult = await dispatch({ ...data, type: Events.Change });
           if (filesResult) {
@@ -83,7 +88,17 @@ const App = (): JSX.Element => {
   }, [files.length, loadAllFiles]);
 
   return (
-    <div className="flex flex-col py-4 px-8 h-full">
+    <div
+      className={concat(
+        "flex",
+        "flex-col",
+        "py-4",
+        "px-8",
+        "print:py-0",
+        "print:px-0",
+        "h-full"
+      )}
+    >
       <Header
         files={files}
         selectedFile={selectedFile}
@@ -94,13 +109,16 @@ const App = (): JSX.Element => {
           className={concat(
             "grow",
             "overflow-auto",
+            "print:overflow-visible",
             "border-2",
+            "print:border-0",
             "border-slate-400",
             "rounded",
             "px-4",
             "py-2",
             "w-full",
             "max-w-screen-lg",
+            "print:max-w-none",
             "mx-auto"
           )}
         >

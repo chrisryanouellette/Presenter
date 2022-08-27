@@ -1,10 +1,10 @@
 const rules: [RegExp, string][] = [
   // Code
   [
-    /```copy\n((.|\n)*)```/g,
+    /`{3}copy\n((.|\n)*?)`{3}/g,
     '<div class="code"><button>Copy</button><code>$1</code></div>',
   ],
-  [/```\n((.|\n)*)```/g, '<div class="code"><code>$1</code></div>'],
+  [/`{3}\n((.|\n)*?)`{3}/g, '<div class="code"><code>$1</code></div>'],
 
   // header rules
   [/#{6}\s?([^\n]+)/g, "<h6>$1</h6>"],
@@ -44,6 +44,9 @@ const rules: [RegExp, string][] = [
     /!\[([^\]]+)\]\(([^)]+)\s"([^")]+)"\)/g,
     '<img src="$2" alt="$1" title="$3" />',
   ],
+
+  // Tabs for code blocks
+  [/ {4}/g, '<span class="tab"></span>'],
 ];
 
 export { rules };

@@ -43,9 +43,17 @@
 }
 
 .markdown .code button {
-    @apply absolute right-0 top-0 bg-gray-300 px-4 py-1 rounded-tr;
+    @apply absolute right-0 top-0 bg-gray-300 px-4 py-1 rounded-tr print:hidden;
 }
 
 .markdown .code button:hover {
     @apply bg-gray-400 text-white;
+}
+
+.markdown .code p {
+    @apply mb-0;
+}
+
+.markdown .tab {
+    @apply pl-3;
 }

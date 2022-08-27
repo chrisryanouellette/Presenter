@@ -15,6 +15,7 @@ const Header: FC<HeaderProps> = ({ files, selectedFile, onSelect }) => {
   return (
     <header
       className={concat(
+        "print:hidden",
         "flex",
         "flex-col",
         "md:flex-row",

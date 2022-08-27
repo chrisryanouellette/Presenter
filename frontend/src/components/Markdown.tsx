@@ -49,9 +49,10 @@ const Markdown: FC<MarkdownProps> = ({ content }) => {
       );
       const invalidNodes: HTMLElement[] = [];
       while (walker.nextNode()) {
-        if (walker.currentNode instanceof HTMLElement) {
-          if (!walker.currentNode.textContent?.length) {
-            invalidNodes.push(walker.currentNode);
+        const node = walker.currentNode;
+        if (node instanceof HTMLElement) {
+          if (!node.textContent?.length && !node.classList.length) {
+            invalidNodes.push(node);
           }
         }
       }

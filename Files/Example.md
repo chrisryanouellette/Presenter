@@ -38,6 +38,10 @@ Sadly there are no tables.
 |---|
 |Row 1|
 
+## Printing
+
+You can print these files as well. If you want the background colors, expand the Print Menus "More Settings" drawer and check "Background Graphics".
+
 ## Custom Markdown
 
-The coolest part is you can add your own parsing rules to the `frontend/rules.ts` file.
+The coolest part is you can add your own parsing rules to the `frontend/src/rules.ts` file.
