@@ -1,34 +1,20 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Actions, dispatch, Events } from "../network-request";
-import { rules } from "../utilities/rules";
-import { copy } from "../utilities/copy";
+import { useStorage } from "../hooks/useStorage";
+import { concat } from "../utilities/concat";
 import { Header } from "./Header";
+import { Markdown } from "./Markdown";
+import { NoMarkdown } from "./NoMarkdown";
+import { NoFiles } from "./NoFiles";
 import "../styles/markdown.css";
 
 const socket = new WebSocket("ws://localhost:5001");
 
 const App = (): JSX.Element => {
+  const { read, write } = useStorage<string>({ key: "file" });
   const [files, setFiles] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<string>("");
-  const [contents, setContents] = useState<string | null>(null);
-  const ref = useRef<HTMLDivElement>(null);
-
-  const markdown = useMemo(() => {
-    let markdown = (contents || "").trim();
-    {
-      rules.forEach(([rule, template]) => {
-        markdown = markdown.replace(rule, template);
-      });
-    }
-    return markdown;
-  }, [contents]);
+  const [content, setContent] = useState<string | null>(null);
 
   const handleMessage = useCallback<(event: MessageEvent) => Promise<void>>(
     async (event) => {
@@ -38,7 +24,7 @@ const App = (): JSX.Element => {
         if (data.type === Events.Change) {
           /** Update File */
           if (data.fileName === selectedFile) {
-            return setContents(() => result);
+            return setContent(() => result);
           }
         }
         /** Handle file rename */
@@ -46,30 +32,42 @@ const App = (): JSX.Element => {
           // Delete file
           setFiles((prev) => prev.filter((p) => data.fileName !== p));
           if (data.fileName === selectedFile) {
-            setContents(() => null);
+            setContent(() => null);
           }
         } else {
           // Add new file
           setFiles((files) => files.concat(data.fileName));
+          // Check if the file added has content
+          const filesResult = await dispatch({ ...data, type: Events.Change });
+          if (filesResult) {
+            return setContent(() => result);
+          }
         }
       }
     },
     [selectedFile]
   );
 
+  const handleSelectFile = useCallback<(fileName: string) => Promise<void>>(
+    async (fileName: string) => {
+      const result = await dispatch({ type: Events.Change, fileName });
+      setContent(() => result);
+      setSelectedFile(() => fileName);
+      write(fileName);
+    },
+    [write]
+  );
+
   const loadAllFiles = useCallback<() => Promise<void>>(async () => {
+    const file = read();
     const files = await dispatch({ type: Events.Request });
-    setFiles(() => files);
-    if (files.length) {
+    if (file && files.includes(file)) {
+      handleSelectFile(file);
+    } else if (files.length) {
       handleSelectFile(files[0]);
     }
-  }, []);
-
-  const handleSelectFile = async (fileName: string): Promise<void> => {
-    const result = await dispatch({ type: Events.Change, fileName });
-    setContents(() => result);
-    setSelectedFile(() => fileName);
-  };
+    setFiles(() => files);
+  }, [handleSelectFile, read]);
 
   useEffect(() => {
     socket.addEventListener("message", handleMessage);
@@ -79,45 +77,38 @@ const App = (): JSX.Element => {
   }, [handleMessage]);
 
   useEffect(() => {
-    let buttons: NodeListOf<HTMLButtonElement>;
-    if (ref.current) {
-      buttons = ref.current.querySelectorAll<HTMLButtonElement>(".code button");
-      Array.from(buttons).forEach((btn) => {
-        btn.addEventListener("click", copy);
-      });
-    }
-    return function copyCodeButtonCleanup(): void {
-      Array.from(buttons).forEach((btn) =>
-        btn.removeEventListener("click", copy)
-      );
-    };
-  }, [contents]);
-
-  useEffect(() => {
     if (!files.length) {
       loadAllFiles();
     }
   }, [files.length, loadAllFiles]);
 
-  useLayoutEffect(() => {
-    if (ref.current) {
-      Array.from(ref.current.childNodes).forEach((child) => {
-        if (!child.textContent) {
-          child.remove();
-        }
-      });
-    }
-  }, [contents]);
-
   return (
-    <div className="my-4 mx-8">
-      <Header files={files} onSelect={handleSelectFile} />
-      <div
-        ref={ref}
-        className="markdown"
-        dangerouslySetInnerHTML={{ __html: markdown }}
-      ></div>
-      {!markdown && <p>This file has no content</p>}
+    <div className="flex flex-col py-4 px-8 h-full">
+      <Header
+        files={files}
+        selectedFile={selectedFile}
+        onSelect={handleSelectFile}
+      />
+      {content && (
+        <div
+          className={concat(
+            "grow",
+            "overflow-auto",
+            "border-2",
+            "border-slate-400",
+            "rounded",
+            "px-4",
+            "py-2",
+            "w-full",
+            "max-w-screen-lg",
+            "mx-auto"
+          )}
+        >
+          <Markdown content={content} />
+        </div>
+      )}
+      {!files.length && <NoFiles />}
+      {files.length && !content?.trim() && <NoMarkdown />}
     </div>
   );
 };

@@ -23,6 +23,8 @@ const rules: [RegExp, string][] = [
 
   // custom text rules
   [/\$alert\s?([^\n]+)/g, '<p class="alert">$1</p>'],
+  [/\$warning\s?([^\n]+)/g, '<p class="warning">$1</p>'],
+  [/\$info\s?([^\n]+)/g, '<p class="info">$1</p>'],
 
   // links
   [
@@ -31,10 +33,7 @@ const rules: [RegExp, string][] = [
   ],
 
   // highlights
-  [
-    /(`)(\s?[^\n,]+\s?)(`)/g,
-    '<a style="background-color:grey;color:black;text-decoration: none;border-radius: 3px;padding:0 2px;">$2</a>',
-  ],
+  [/(`)(\s?[^\n,]+\s?)(`)/g, '<code class="inline-code">$2</code>'],
 
   // Lists
   [/([^\n]+)(\+)([^\n]+)/g, "<ul><li>$3</li></ul>"],
