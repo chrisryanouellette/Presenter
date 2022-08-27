@@ -5,10 +5,10 @@
   "private": true,
   "main": "build/index.html",
   "scripts": {
+    "start": "yarn develop",
     "develop": "react-scripts start",
     "build": "react-scripts build",
     "emulate": "firebase emulators:start --only hosting",
-    "deploy": "",
     "ci": "yarn lint && yarn test:coverage",
     "bundle": "yarn bundle:stats && yarn bundle:view",
     "bundle:stats": "react-scripts build --stats",

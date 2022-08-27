@@ -5,10 +5,11 @@
   "private": true,
   "main": "lib/index.js",
   "scripts": {
-    "develop": "yarn build:watch & yarn start",
+    "start": "node ./lib/index.js",
+    "develop": "yarn build:watch & yarn develop:watch",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "start": "nodemon ./lib/index.js",
+    "develop:watch": "nodemon ./lib/index.js",
     "bundle": "yarn bundle:stats && yarn bundle:view",
     "bundle:stats": "react-scripts build --stats",
     "bundle:view": "webpack-bundle-analyzer --mode static --report build/bundle-stats.html build/bundle-stats.json",
