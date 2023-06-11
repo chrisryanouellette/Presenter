@@ -25,6 +25,7 @@ const rules: [RegExp, string][] = [
   [/\$alert\s?([^\n]+)/g, '<p class="alert">$1</p>'],
   [/\$warning\s?([^\n]+)/g, '<p class="warning">$1</p>'],
   [/\$info\s?([^\n]+)/g, '<p class="info">$1</p>'],
+  [/\$success\s?([^\n]+)/g, '<p class="success">$1</p>'],
 
   // links
   [
